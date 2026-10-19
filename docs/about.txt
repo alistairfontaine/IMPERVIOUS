@@ -1,0 +1,21 @@
+Project Concept & Name
+
+IMPERVIOUS
+
+
+What IMPERVIOUS Does
+
+IMPERVIOUS is a first-principles, low-dependency C++ command-line application built from scratch for the ZMC–NUST Media Innovation Hackathon. It addresses the massive challenges of expensive data infrastructure and exposed communication footprints in the Zimbabwean digital media space by introducing a secure, zero-dependency data handler.
+The application houses two distinct, high-performance low-level modules:
+
+1. The HTML Data-Stripping Reader Engine
+
+• The Function: It parses raw, heavily bloated HTML page dumps or news feeds.
+• The Action: Using pure string manipulation without heavy third-party parsing libraries, it strips tracking scripts, bloated stylesheets, media frames, and heavy DOM elements.
+• The Output: It compiles a hyper-minimal text file using your custom .imp extension, saving massive amounts of data so citizens can access essential journalism cheaply over expensive mobile networks.
+
+2. The Binary Metadata Tip-Line Sanitizer
+
+• The Function: It acts as a gatekeeper for incoming whistleblower leaks or citizen journalism documents.
+• The Action: It reads raw media streams at the binary byte layer, seeking out specific layout headers containing device profiles, camera settings, and geotags (EXIF data).
+• The Output: It purges those specific byte segments completely before saving the file, rendering the media document anonymous at the low level before it can be intercepted or indexed.

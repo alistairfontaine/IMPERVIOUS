@@ -1,0 +1,23 @@
+# Compilations and Native Executables
+impervious_engine
+*.exe
+*.out
+*.app
+
+# Local Build Framework Artifacts
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+
+# Editor Configurations & Recovery Dumps
+.kateconfig
+*~
+*.swp
+*.tmp
+*.log
+
+# Custom Sandbox Dumps
+docs/*.imp
