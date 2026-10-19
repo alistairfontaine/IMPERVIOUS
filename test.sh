@@ -21,17 +21,39 @@ TEST_IMAGE="sandbox/my_photo.jpg"
 CLEANSE_IMAGE="sandbox/cleansed_photo.jpg"
 
 # 2. Subsystem A Setup: HTML Compression Core
-printf "[STEP 1] Building HTML structural test data...\n"
+printf "[STEP 1] Building hyper-focused structural hackathon news feed...\n"
 cat << 'EOF' > "$MOCK_HTML"
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>ZMC Breaking News Feed</title>
-    <script type="text/javascript">console.log("Tracker active");</script>
+    <meta charset="UTF-8">
+    <title>ZMC-NUST Innovation News Hub</title>
+    <script type="text/javascript">
+        // Tracking footprint simulation
+        let trackingBeacon = "https://corporate-fluff.com";
+        navigator.sendBeacon(trackingBeacon, { user_data_costs: "high" });
+    </script>
+    <style>
+        body { font-family: monospace; background: #111; color: #ccc; }
+        .expensive-ad-container { display: block; margin: 40px; border: 5px solid red; }
+    </style>
 </head>
 <body>
-    <h1>Critical News Flash</h1>
-    <p>The ZMC-NUST Media Innovation Hackathon has officially started.</p>
+    <div class="expensive-ad-container">
+        <!-- Massive ad image simulated bloat -->
+        <p>ADVERTISEMENT: Buy Flashy Cloud Platforms Here!</p>
+    </div>
+
+    <article class="news-content">
+        <h1>BUILDING SUSTAINABLE MEDIA FOR ZIMBABWE</h1>
+        <h3>Theme: Local Technology for Efficient Newsrooms, Loyal Audiences, and New Revenue</h3>
+
+        <p><strong>EFFICIENT NEWSROOMS:</strong> Traditional media platforms are collapsing under the weight of expensive cloud licensing fees and massive processing bloat. Newsrooms need locally compiled, zero-dependency tools running on standard available desktop hardware to keep operating costs at zero.</p>
+
+        <p><strong>LOYAL AUDIENCES:</strong> Ordinary citizens face massive data constraints. Web pages flooded with heavy layout nodes, presentation styles, and commercial ad blocks make loading essential journalism a luxury. Compressing data footprints builds deep loyalty through immediate financial relief for the consumer.</p>
+
+        <p><strong>NEW REVENUE:</strong> Dropping transmission overhead margins to zero opens instant profitability lines. Delivering a hyper-fast, low-bandwidth, tracking-free premium feed allows media houses to monetize specialized secure channels for clients demanding data conservation.</p>
+    </article>
 </body>
 </html>
 EOF

@@ -1,4 +1,4 @@
-# <img src="assets/logo.png" alt="IMPERVIOUS Logo" width="48" height="48"> IMPERVIOUS
+# <img src="assets/logo.png" alt="IMPERVIOUS Logo"> IMPERVIOUS
 
 An ultra-performance, zero-dependency C++ native engine built from first principles for the ZMC–NUST Media Innovation Hackathon. IMPERVIOUS targets critical issues within Zimbabwe's media ecosystem: high data costs and vulnerable digital footprints.
 

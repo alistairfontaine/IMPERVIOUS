@@ -32,23 +32,45 @@ namespace Impervious {
 
         std::cout << "[SYSTEM] Activating IMPERVIOUS HTML Data-Stripping Core..." << std::endl;
 
+        bool flagInsideTag = false;
+        bool flagBlockScript = false;
+        bool flagBlockStyle = false;
+        std::string accumulatedTag = "";
+
         while (std::getline(srcFile, textLine)) {
             metrics.initialBytes += textLine.length() + 1;
-
             std::string isolatedPayload = "";
-            bool flagInsideTag = false;
 
-            for (char character : textLine) {
+            for (size_t i = 0; i < textLine.length(); ++i) {
+                char character = textLine[i];
+
                 if (character == '<') {
                     flagInsideTag = true;
+                    accumulatedTag = "";
                     continue;
                 }
                 if (character == '>') {
                     flagInsideTag = false;
+
+                    // Evaluate structural telemetry and styling block wrappers
+                    if (accumulatedTag.find("script") != std::string::npos) {
+                        if (accumulatedTag[0] == '/') flagBlockScript = false; // Closed </script>
+                        else flagBlockScript = true; // Opened <script>
+                    }
+                    else if (accumulatedTag.find("style") != std::string::npos) {
+                        if (accumulatedTag[0] == '/') flagBlockStyle = false; // Closed </style>
+                        else flagBlockStyle = true; // Opened <style>
+                    }
                     continue;
                 }
-                if (!flagInsideTag) {
-                    isolatedPayload += character;
+
+                if (flagInsideTag) {
+                    accumulatedTag += character;
+                } else {
+                    // Only preserve text outside tags, script contents, and style arrays
+                    if (!flagBlockScript && !flagBlockStyle) {
+                        isolatedPayload += character;
+                    }
                 }
             }
 
@@ -130,8 +152,12 @@ namespace Impervious {
                     }
 
                     if (markerType == 0xFFDA) { // SOS - Image data boundary
+                        trgBin.put(byteBuffer[cursor]);
+                        trgBin.put(byteBuffer[cursor + 1]);
+                        cursor += 2;
                         break;
                     }
+
                 }
 
                 trgBin.put(byteBuffer[cursor]);
