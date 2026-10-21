@@ -32,10 +32,21 @@ const localization = {
     }
 };
 
+// Defensive DOM helper — logs instead of crashing if a node is missing
+function setText(id, text) {
+    const el = document.getElementById(id);
+    if (el) {
+        el.innerText = text;
+    } else {
+        console.error(`[IMPERVIOUS] Missing DOM node: #${id}`);
+    }
+}
+
 function setLanguage(lang) {
     ['en', 'sn', 'nd'].forEach(l => {
         const btn = document.getElementById(`lang-${l}`);
-        if(l === lang) {
+        if (!btn) return;
+        if (l === lang) {
             btn.classList.add('bg-zinc-800', 'text-white');
             btn.classList.remove('bg-zinc-900', 'text-zinc-400');
         } else {
@@ -45,24 +56,27 @@ function setLanguage(lang) {
     });
 
     const data = localization[lang];
-    document.getElementById('mod-a-title').innerText = data.modATitle;
-    document.getElementById('mod-a-desc').innerText = data.modADesc;
-    document.getElementById('btn-process-text').innerText = data.btnProcess;
-    document.getElementById('metrics-header').innerText = data.metricsHeader;
-    document.getElementById('privacy-notice').innerText = data.privacyNotice;
-    document.getElementById('mod-b-title').innerText = data.modBTitle;
-    document.getElementById('mod-b-desc').innerText = data.modBDesc;
-    document.getElementById('upload-prompt').innerText = data.uploadPrompt;
+    if (!data) return;
+    setText('mod-a-title', data.modATitle);
+    setText('mod-a-desc', data.modADesc);
+    setText('btn-process-text', data.btnProcess);
+    setText('metrics-header', data.metricsHeader);
+    setText('privacy-notice', data.privacyNotice);
+    setText('mod-b-title', data.modBTitle);
+    setText('mod-b-desc', data.modBDesc);
+    setText('upload-prompt', data.uploadPrompt);
 }
 
 // Subsystem A execution logic
 function processWebText() {
-    const rawInput = document.getElementById('text-input').value;
+    const inputEl = document.getElementById('text-input');
+    if (!inputEl) return;
+    const rawInput = inputEl.value;
     if (!rawInput) return;
 
-    // Linear parsing emulation mimicking your native execution model
-    let cleanText = rawInput.replace(/<script[^>]*>([\s\(\S\)]*?)<\/script>/gi, '');
-    cleanText = cleanText.replace(/<style[^>]*>([\s\(\S\)]*?)<\/style>/gi, '');
+    // Linear parsing emulation mimicking the native execution model
+    let cleanText = rawInput.replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, '');
+    cleanText = cleanText.replace(/<style[^>]*>([\s\S]*?)<\/style>/gi, '');
     cleanText = cleanText.replace(/<[^>]+>/g, '\n');
     cleanText = cleanText.split('\n').map(line => line.trim()).filter(line => line.length > 0).join('\n');
 
@@ -71,25 +85,24 @@ function processWebText() {
     const bytesSaved = originalBytes - cleanBytes;
     const reductionPct = originalBytes > 0 ? ((bytesSaved / originalBytes) * 100).toFixed(4) : 0;
 
-    document.getElementById('raw-size').innerText = originalBytes;
-    document.getElementById('clean-size').innerText = cleanBytes;
-    document.getElementById('saved-size').innerText = bytesSaved;
-    document.getElementById('relief-pct').innerText = reductionPct;
+    setText('raw-size', originalBytes);
+    setText('clean-size', cleanBytes);
+    setText('saved-size', bytesSaved);
+    setText('relief-pct', reductionPct);
 
-    document.getElementById('text-metrics').classList.remove('hidden');
+    const metrics = document.getElementById('text-metrics');
+    if (metrics) metrics.classList.remove('hidden');
 }
 
 // Subsystem B execution logic (Client-Side Metadata Stripper)
 function processMediaAsset(input) {
-    if (!input.files || !input.files[0]) return;
+    if (!input || !input.files || !input.files[0]) return;
 
     const file = input.files[0];
 
-    // Dynamically update the specific template nodes with the file parameters
-    document.getElementById('web-bin-name').innerText = file.name;
-    document.getElementById('web-bin-size').innerText = `${file.size} bytes`;
+    setText('web-bin-name', file.name);
+    setText('web-bin-size', `${file.size} bytes`);
 
-    // Unhide the completed security verification block
-    document.getElementById('media-metrics').classList.remove('hidden');
+    const metrics = document.getElementById('media-metrics');
+    if (metrics) metrics.classList.remove('hidden');
 }
-
