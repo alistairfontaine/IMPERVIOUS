@@ -32,11 +32,13 @@
             <textarea id="text-input" class="w-full h-48 p-3 input-bg text-sm rounded focus:outline-none focus:border-emerald-500 text-emerald-400" placeholder="Paste raw HTML page source or news feed content here..."></textarea>
             <button onclick="processWebText()" class="mt-4 w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-black font-bold tracking-wider rounded uppercase text-sm" id="btn-process-text">Execute Compliance Filter</button>
 
-            <div id="text-metrics" class="mt-4 p-3 bg-black rounded border border-zinc-900 hidden text-xs space-y-1">
+            <div id="text-metrics" class="mt-4 p-3 bg-black rounded border border-zinc-900 hidden text-xs space-y-2">
                 <p class="text-white font-bold mb-1" id="metrics-header">AUDIT METRICS:</p>
                 <p>Raw Payload Size: <span id="raw-size" class="text-emerald-400">0</span> bytes</p>
                 <p>Sanitized Footprint: <span id="clean-size" class="text-emerald-400">0</span> bytes</p>
                 <p>Bandwidth Saved: <span id="saved-size" class="text-emerald-400">0</span> bytes (<span id="relief-pct" class="text-emerald-400">0</span>%)</p>
+                <textarea id="text-output" readonly class="w-full h-32 p-2 input-bg text-emerald-300 text-xs rounded focus:outline-none" placeholder="Sanitized .imp payload preview..."></textarea>
+                <a id="text-download" class="block w-full text-center py-2 bg-emerald-600 hover:bg-emerald-500 text-black font-bold tracking-wider rounded uppercase text-xs cursor-pointer" download="output_report.imp">Download .imp Report</a>
                 <p class="text-zinc-500 mt-2 italic" id="privacy-notice">*Processed entirely in browser memory. Zero network logging.</p>
             </div>
         </section>

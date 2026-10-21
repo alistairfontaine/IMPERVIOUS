@@ -90,6 +90,19 @@ function processWebText() {
     setText('saved-size', bytesSaved);
     setText('relief-pct', reductionPct);
 
+    // Surface the sanitized payload + wire the .imp download
+    const outputEl = document.getElementById('text-output');
+    if (outputEl) outputEl.value = cleanText;
+
+    const link = document.getElementById('text-download');
+    if (link) {
+        const blob = new Blob([cleanText], { type: 'text/plain' });
+        if (window._impUrl) URL.revokeObjectURL(window._impUrl);
+        window._impUrl = URL.createObjectURL(blob);
+        link.href = window._impUrl;
+        link.classList.remove('hidden');
+    }
+
     const metrics = document.getElementById('text-metrics');
     if (metrics) metrics.classList.remove('hidden');
 }
