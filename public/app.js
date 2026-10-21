@@ -82,5 +82,14 @@ function processWebText() {
 // Subsystem B execution logic (Client-Side Metadata Stripper)
 function processMediaAsset(input) {
     if (!input.files || !input.files[0]) return;
+
+    const file = input.files[0];
+
+    // Dynamically update the specific template nodes with the file parameters
+    document.getElementById('web-bin-name').innerText = file.name;
+    document.getElementById('web-bin-size').innerText = `${file.size} bytes`;
+
+    // Unhide the completed security verification block
     document.getElementById('media-metrics').classList.remove('hidden');
 }
+
