@@ -60,13 +60,15 @@
             <div id="media-metrics" class="mt-4 p-3 bg-black rounded border border-zinc-900 hidden text-xs space-y-2">
                 <p class="text-white font-bold" id="media-metrics-header">PRIVACY SHIELD ENGAGED:</p>
                 <div id="media-status-box" class="p-2 bg-emerald-950/30 border border-emerald-800 text-emerald-400 rounded flex justify-between">
-                    <span>Status: <span class="font-bold font-mono text-white" id="media-flag">SECURELY STRIPPED</span></span>
+                    <span>Status: <span class="font-bold font-mono text-white" id="media-flag">SCANNING...</span></span>
                     <span class="text-white" id="web-bin-size">0 bytes</span>
                 </div>
-                <div class="p-2 bg-zinc-900 text-zinc-400 rounded text-[11px] font-mono break-all" id="media-file-info">
+                <p class="text-zinc-400">Identity Bloat Purged: <span id="web-bin-stripped" class="text-emerald-400">0</span> bytes</p>
+                <div class="p-2 bg-zinc-900 text-zinc-400 rounded text-[11px] font-mono break-all">
                     Asset Trace: <span id="web-bin-name" class="text-emerald-400">none</span>
                 </div>
-                <p class="text-zinc-500 text-[11px]" id="media-notice">All metadata indices and physical device signatures cleared from file memory matrix.</p>
+                <a id="media-download" class="hidden mt-2 block w-full text-center py-2 bg-emerald-600 hover:bg-emerald-500 text-black font-bold tracking-wider rounded uppercase text-xs" download="cleansed_asset.jpg">Download Cleansed Asset</a>
+                <p class="text-zinc-500 text-[11px]">All metadata indices and physical device signatures cleared from file memory matrix.</p>
             </div>
         </section>
     </main>

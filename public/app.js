@@ -94,15 +94,96 @@ function processWebText() {
     if (metrics) metrics.classList.remove('hidden');
 }
 
-// Subsystem B execution logic (Client-Side Metadata Stripper)
-function processMediaAsset(input) {
+// --- Native byte-layer sanitizer (mirrors the C++ Subsystem B logic) ---
+
+function stripJpegExif(bytes) {
+    // JPEG must begin with SOI marker 0xFFD8
+    if (bytes.length < 4 || bytes[0] !== 0xFF || bytes[1] !== 0xD8) {
+        return { data: bytes, stripped: 0 };
+    }
+    const out = [bytes[0], bytes[1]];
+    let stripped = 0;
+    let pos = 2;
+    while (pos < bytes.length - 1) {
+        if (bytes[pos] !== 0xFF) { out.push(bytes[pos]); pos++; continue; }
+        const marker = bytes[pos + 1];
+        // Standalone markers (RST0-RST7, TEM) carry no length field
+        if (marker === 0x01 || (marker >= 0xD0 && marker <= 0xD8)) {
+            out.push(bytes[pos], bytes[pos + 1]); pos += 2; continue;
+        }
+        if (pos + 3 >= bytes.length) { out.push(bytes[pos]); pos++; continue; }
+        const segLen = (bytes[pos + 2] << 8) | bytes[pos + 3];
+        if (marker === 0xE1) {          // APP1: EXIF / XMP identity payload
+            stripped += segLen + 2;
+            pos += segLen + 2;
+            continue;
+        }
+        if (marker === 0xDA) {          // SOS: image data begins, flush rest verbatim
+            for (let i = pos; i < bytes.length; i++) out.push(bytes[i]);
+            return { data: new Uint8Array(out), stripped };
+        }
+        for (let i = 0; i < segLen + 2; i++) out.push(bytes[pos + i]);
+        pos += segLen + 2;
+    }
+    return { data: new Uint8Array(out), stripped };
+}
+
+function stripPngExif(bytes) {
+    // PNG signature: 89 50 4E 47 0D 0A 1A 0A
+    const sig = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A];
+    if (bytes.length < 8 || sig.some((b, i) => bytes[i] !== b)) {
+        return { data: bytes, stripped: 0 };
+    }
+    const out = Array.from(bytes.slice(0, 8));
+    let stripped = 0;
+    let pos = 8;
+    while (pos + 8 <= bytes.length) {
+        const len = (bytes[pos] << 24 | bytes[pos+1] << 16 | bytes[pos+2] << 8 | bytes[pos+3]) >>> 0;
+        const type = String.fromCharCode(bytes[pos+4], bytes[pos+5], bytes[pos+6], bytes[pos+7]);
+        const chunk = bytes.slice(pos, pos + 12 + len);
+        if (type === 'eXIf') { stripped += chunk.length; }
+        else { out.push(...chunk); }
+        pos += 12 + len;
+    }
+    return { data: new Uint8Array(out), stripped };
+}
+
+// Subsystem B execution logic — REAL binary sanitizer
+async function processMediaAsset(input) {
     if (!input || !input.files || !input.files[0]) return;
 
     const file = input.files[0];
-
     setText('web-bin-name', file.name);
     setText('web-bin-size', `${file.size} bytes`);
+    setText('media-flag', 'SCANNING...');
 
     const metrics = document.getElementById('media-metrics');
     if (metrics) metrics.classList.remove('hidden');
+
+    try {
+        const buffer = new Uint8Array(await file.arrayBuffer());
+        const isPng = file.type === 'image/png' ||
+            (buffer.length > 4 && buffer[1] === 0x50 && buffer[2] === 0x4E && buffer[3] === 0x47);
+
+        const result = isPng ? stripPngExif(buffer) : stripJpegExif(buffer);
+        const outSize = result.data.length;
+        const purged = result.stripped;
+
+        setText('web-bin-stripped', `${purged} (output: ${outSize} bytes)`);
+        setText('media-flag', purged > 0 ? 'SECURELY STRIPPED' : 'CLEAN / NO EXIF DETECTED');
+
+        const link = document.getElementById('media-download');
+        if (link) {
+            const ext = isPng ? 'png' : 'jpg';
+            const blob = new Blob([result.data], { type: isPng ? 'image/png' : 'image/jpeg' });
+            if (window._cleansedUrl) URL.revokeObjectURL(window._cleansedUrl);
+            window._cleansedUrl = URL.createObjectURL(blob);
+            link.href = window._cleansedUrl;
+            link.download = `cleansed_${file.name.replace(/\.[^.]+$/, '')}.${ext}`;
+            link.classList.remove('hidden');
+        }
+    } catch (err) {
+        console.error('[IMPERVIOUS] Sanitizer fault:', err);
+        setText('media-flag', 'ENGINE FAULT');
+    }
 }
